@@ -4,8 +4,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": " concurrently \"tsc --watch\" \"nodemon dist/server.js \""
+    "start": "node dist/server.js",
+    "build": "npm run delete && npx tsc -p . ",
+    "delete": "npx rimraf dist"
   },
   "keywords": [],
   "author": "",
