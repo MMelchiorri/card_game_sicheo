@@ -46,10 +46,10 @@ export default class Deck {
   create_deck_for_player(): any {
     var index_of_player_deck = 0;
 
-    for (let i = 0; i <= this.deck.length; i++) {
-      if (i != 0 && i % 4 == 0 && index_of_player_deck < 10) {
+    for (let i = 1; i <= this.deck.length; i++) {
+      if (i % 5 == 0 && index_of_player_deck < 10) {
+        console.log(this.players_user_card[index_of_player_deck])
         let swap = this.deck[i];
-
         let index_of_player_card = this.deck.indexOf(
           this.players_user_card[index_of_player_deck]
         );
@@ -58,6 +58,11 @@ export default class Deck {
         index_of_player_deck++;
       }
     }
+    console.log('before',this.deck)
+    let val =this.deck[0]
+    this.deck.splice(0, 1)
+    this.deck.push(val)
+    console.log('after',this.deck)
   }
 
   create_deck_for_level(level: number) {
@@ -66,17 +71,18 @@ export default class Deck {
       case 0: { //DIFFERENT VALUE OR SUITE
         this.players_user_card = [];
         for (let i = 0; i < this.deck.length; i++) {
+
           if (
-            this.deck[i] == "D08" || //ok
-            this.deck[i] == "S07" || //ok
-            this.deck[i] == "C01" ||
-            this.deck[i] == "H05" || //ok
-            this.deck[i] == "S05" || //ok
-            this.deck[i] == "S11" || //ok
+            this.deck[i] == "D08" || 
+            this.deck[i] == "S07" || 
+            this.deck[i] == "C01" || 
+            this.deck[i] == "H05" || 
+            this.deck[i] == "S05" || 
+            this.deck[i] == "S11" || 
             this.deck[i] == "H13" ||
-            this.deck[i] == "C12" ||
-            this.deck[i] == "H02" || //ok
-            this.deck[i] == "D10" //ok
+            this.deck[i] == "C12" || 
+            this.deck[i] == "H02" || 
+            this.deck[i] == "D10" 
           ) {
             this.players_user_card.push(this.deck[i]);
           } else {

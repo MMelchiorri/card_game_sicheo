@@ -8,12 +8,12 @@ import {
 } from "./Database/create_table";
 import cors from 'cors'
 import { handleError } from "./Middleware/ErrorMiddleware";
-import { User } from "./Model/UserModel";
+import config from "./config";
 
 
 const app = express();
 
-const PORT = 3000;
+const PORT = config.PORT_SERVER ||3000;
 
 app.use(express.json());
 
