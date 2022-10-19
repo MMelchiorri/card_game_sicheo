@@ -48,7 +48,6 @@ export default class Deck {
 
     for (let i = 1; i <= this.deck.length; i++) {
       if (i % 5 == 0 && index_of_player_deck < 10) {
-        console.log(this.players_user_card[index_of_player_deck])
         let swap = this.deck[i];
         let index_of_player_card = this.deck.indexOf(
           this.players_user_card[index_of_player_deck]
@@ -58,11 +57,9 @@ export default class Deck {
         index_of_player_deck++;
       }
     }
-    console.log('before',this.deck)
     let val =this.deck[0]
     this.deck.splice(0, 1)
     this.deck.push(val)
-    console.log('after',this.deck)
   }
 
   create_deck_for_level(level: number) {
