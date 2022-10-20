@@ -59,7 +59,9 @@ export default class Deck {
     }
     let val =this.deck[0]
     this.deck.splice(0, 1)
-    this.deck.push(val)
+    this.deck.push(val);
+    this.deck = [...new Set(this.deck)] //check unique element in array
+
   }
 
   create_deck_for_level(level: number) {
