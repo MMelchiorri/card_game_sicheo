@@ -65,6 +65,7 @@ export default class Deck {
   }
 
   create_deck_for_level(level: number) {
+
     this.shuffleDeck();
     switch (level) {
       case 0: { //DIFFERENT VALUE OR SUITE
@@ -88,7 +89,7 @@ export default class Deck {
             this.players_bot_card.push(this.deck[i]);
           }
         }
-
+        
         this.create_deck_for_player();
         break;
       }
@@ -112,6 +113,7 @@ export default class Deck {
             this.players_bot_card.push(this.deck[i]);
           }
         }
+
         this.create_deck_for_player();
         break;
       }
@@ -119,7 +121,7 @@ export default class Deck {
         this.players_user_card = [];
         for (let i = 0; i < this.deck.length; i++) {
           if (
-            this.deck[i] == "C01" ||
+            this.deck[i] == "C02" ||
             this.deck[i] == "D11" ||
             this.deck[i] == "S04" ||
             this.deck[i] == "S09" ||
@@ -169,7 +171,7 @@ export default class Deck {
             this.deck[i] == "D05" ||
             this.deck[i] == "C07" ||
             this.deck[i] == "C01" ||
-            this.deck[i] == "Q12" ||
+            this.deck[i] == "D12" ||
             this.deck[i] == "C04" ||
             this.deck[i] == "S08" ||
             this.deck[i] == "S01"
@@ -187,8 +189,8 @@ export default class Deck {
         this.players_user_card = [];
         for (let i = 0; i < this.deck.length; i++) {
           if (
-            this.deck[i] == "Q12" ||
-            this.deck[i] == "K13" ||
+            this.deck[i] == "C12" ||
+            this.deck[i] == "H13" ||
             this.deck[i] == "S10" ||
             this.deck[i] == "C07" ||
             this.deck[i] == "D06" ||
@@ -267,7 +269,7 @@ export default class Deck {
             this.deck[i] == "D07" ||
             this.deck[i] == "S11" ||
             this.deck[i] == "S06" ||
-            this.deck[i] == "A01"
+            this.deck[i] == "S01"
           ) {
             this.players_user_card.push(this.deck[i]);
           } else {

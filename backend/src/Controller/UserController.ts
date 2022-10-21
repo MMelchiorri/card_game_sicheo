@@ -48,12 +48,13 @@ export const sign_in = async (req: Request, res: Response, next: NextFunction) =
 export const start_game = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 
-		const result = await userModel.start_game(req.body.username, req.body.password, req.body.level_progress)
+		const result = await userModel.start_game(req.body.username, req.body.password)
 		res.status(200).json({
 			"message": "Game started correctly",
 			data: {
-				level_progress: result.level_progress,
-				number_of_trials: result.number_of_trials[req.body.level_progress]
+				"level_progress":result.level_progress,
+				"bonus":result.bonus,
+				"deck_level":result.deck_level,
 			}
 		})
 	} catch (error: Error | any) {
@@ -77,12 +78,12 @@ export const start_game = async (req: Request, res: Response, next: NextFunction
 export const update_score = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 
-		const result = await userModel.update_score_deck(req.body.score, req.body.level_progress, req.body.username, req.body.password)
+		const result = await userModel.update_score_deck(req.body.username, req.body.password,req.body.game_score)
 		res.status(200).json({
 			"message": "score and progress updated",
 			data: {
-				level_progress: result.level_progress,
-				score: result.score
+				"level_progress":result.level_progress,
+				"global_score":result.global_score
 			}
 		})
 	} catch (error: Error | any) {

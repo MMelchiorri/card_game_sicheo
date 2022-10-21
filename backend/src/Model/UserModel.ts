@@ -4,6 +4,7 @@ import { poll } from "../Database/connection_db";
 import { NumberError } from "../Error/number.error";
 import { LoginError } from "../Error/login.error";
 import Deck from "./DeckModel";
+import { Pool } from "pg";
 
 export class User {
   deck = new Deck();
@@ -23,7 +24,7 @@ export class User {
           "($1)" +
           `,` +
           "($2)" +
-          `,'0','0',` +
+          `,'0','0','2',` +
           "($3)" +
           `,['0','0','0','0','0','0','0','0','0','0']);`,
         [username, password_hashed, deck_of_card]
@@ -35,11 +36,12 @@ export class User {
 
   /*check if user exists and the password is correct */
   sign_in = async (username: string, password: string) => {
-    const result = await poll.query(
-      `select username,score,level_progress,number_of_trials,deck_level from card_game.client where username='` +
+    let result = await poll.query(
+      `select username,global_score,level_progress,bonus from card_game.client where username='` +
         username +
         `'`
     );
+
     const password_hashed = await poll.query(
       `select password from card_game.client where username='` + username + `'`
     );
@@ -49,89 +51,153 @@ export class User {
     ) {
       throw new LoginError("Username or Password not correct", 401);
     }
+
     return result.rows[0];
   };
 
   /* increment number of trials of a level when stars a new game for that level */
-  start_game = async (
-    username: string,
-    password: string,
-    level: number | any
-  ) => {
-    const password_hashed = await poll.query(
+  start_game = async (username: string, password: string) => {
+    let password_hashed = await poll.query(
       `select password from card_game.client where username='` + username + `'`
     );
     if (!bcrypt.compareSync(password, password_hashed.rows[0].password)) {
       throw new LoginError("Username or Password not correct", 401);
     }
+    let number_of_trials = await poll.query(
+      `select first_trials from card_game.client where username='` +
+        username +
+        `'`
+    );
+    let bonus = await poll.query(
+      `select bonus from card_game.client where username='` + username + `'`
+    );
 
-    if (isNaN(parseInt(level))) {
-      throw new NumberError("The parameter is not a number", 400);
+    let level_progress = await poll.query(
+      `select level_progress from card_game.client where username='` +
+        username +
+        `'`
+    );
+
+    let deck_level = await poll.query(
+      `select deck_level from card_game.client where username='` +
+        username +
+        `'`
+    );
+
+    let global_score = await poll.query(
+      `select global_score from card_game.client where username='` +
+        username +
+        `'`
+    );
+
+    number_of_trials.rows[0].first_trials[
+      level_progress.rows[0].level_progress
+    ] += 1;
+
+    if (
+      number_of_trials.rows[0].first_trials[
+        level_progress.rows[0].level_progress
+      ] > 1
+    ) {
+      if (bonus.rows[0].bonus > 0) {
+        bonus.rows[0].bonus -= 1;
+      } else {
+        level_progress.rows[0].level_progress += 1;
+        deck_level.rows[0].deck_level = this.deck.create_deck_for_level(
+          level_progress.rows[0].level_progress
+        );
+      }
     }
-    const number_of_trials = await poll.query(
-      `select number_of_trials from card_game.client where username='` +
-        username +
-        `'`
-    );
-    number_of_trials.rows[0].number_of_trials[level] += 1;
+
     await poll.query(
-      `update card_game.client set number_of_trials=($1) where username=($2)`,
-      [number_of_trials.rows[0].number_of_trials, username]
+      `update card_game.client set global_score=($1), level_progress=($2), bonus=($3), deck_level=($4),first_trials=($5) where username=($6)`,
+      [
+        global_score.rows[0].global_score,
+        level_progress.rows[0].level_progress,
+        bonus.rows[0].bonus,
+        deck_level.rows[0].deck_level,
+        number_of_trials.rows[0].first_trials,
+        username,
+      ]
     );
-    const retrieve_number_of_trials_level = await poll.query(
-      `select number_of_trials,level_progress from card_game.client where username='` +
+    const result = await poll.query(
+      `select deck_level,bonus,level_progress from card_game.client where username='` +
         username +
         `'`
     );
-    return retrieve_number_of_trials_level.rows[0];
+    return result.rows[0];
   };
 
-  /*update the score for one player when finish a level */
+  /*update the score for one player when he finish a level */
   update_score_deck = async (
-    score: number,
-    level_progress: number | any,
+
     username: string,
-    password: string
+    password: string,
+    score: number,
   ) => {
-    const result = await poll.query(
-      `select password,score,level_progress from card_game.client where username='` +
+    const password_ = await poll.query(
+      `select password from card_game.client where username='` +
         username +
         `'`
     );
-    if (!bcrypt.compareSync(password, result.rows[0].password)) {
+    if (!bcrypt.compareSync(password, password_.rows[0].password)) {
       throw new LoginError("Username or Password not correct", 401);
     }
 
-    const number_of_trials = await poll.query(
-      `select number_of_trials from card_game.client where username='` +
+    let deck_level = await poll.query(
+      `select deck_level from card_game.client where username='` +
         username +
         `'`
     );
-    if (level_progress > number_of_trials.rows[0].number_of_trials.length) {
-      throw new Error(
-        "Level progress more than numbers of " +
-          number_of_trials.rows[0].number_of_trials.length
-      );
-    }
-    if (score > 200) {
-      throw new Error(`The score is too high, you cheated`);
-    }
 
-    score += result.rows[0].score;
-    level_progress = result.rows[0].level_progress + 1;
-    let deck_of_card = this.deck.create_deck_for_level(level_progress);
+    let global_score = await poll.query(
+      `select global_score from card_game.client where username='` +
+        username +
+        `'`
+    );
+    let number_of_trials = await poll.query(
+      `select first_trials from card_game.client where username='` +
+        username +
+        `'`
+    );
 
+    
+    let level_progress = await poll.query(
+      `select level_progress from card_game.client where username='` +
+        username +
+        `'`
+    );
+
+
+    number_of_trials.rows[0].first_trials[
+      level_progress.rows[0].level_progress
+    ] += 1;
+
+    level_progress.rows[0].level_progress += 1;
+
+    global_score.rows[0].global_score += score
+
+    deck_level.rows[0].deck_level = this.deck.create_deck_for_level(
+      level_progress.rows[0].level_progress
+    );
 
     await poll.query(
-      `update card_game.client set score=($1), level_progress=($2), deck_level=($3) where username=($4)`,
-      [score, level_progress,deck_of_card, username]
-    );
-    const retrieve_score_level = await poll.query(
-      `select score,level_progress from card_game.client where username='` +
-        username +
-        `'`
-    );
-    return retrieve_score_level.rows[0];
+      `update card_game.client set global_score=($1), level_progress=($2), deck_level=($3),first_trials=($4) where username=($5)`,
+      [
+        global_score.rows[0].global_score,
+        level_progress.rows[0].level_progress,
+        deck_level.rows[0].deck_level,
+        number_of_trials.rows[0].first_trials,
+        username,
+      ])
+
+      const result = await poll.query(
+        `select level_progress,global_score from card_game.client where username='` +
+          username +
+          `'`
+      );
+      return result.rows[0];
+
   };
 
   /*get score of all the player */
