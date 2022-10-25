@@ -217,7 +217,7 @@ export default class Deck {
             this.deck[i] == "C11" ||
             this.deck[i] == "S13" ||
             this.deck[i] == "H09" ||
-            this.deck[i] == "C06" ||
+            this.deck[i] == "D10" ||
             this.deck[i] == "D05" ||
             this.deck[i] == "C03" ||
             this.deck[i] == "D02" ||
@@ -229,6 +229,7 @@ export default class Deck {
             this.players_bot_card.push(this.deck[i]);
           }
         }
+        console.log(this.players_user_card)
         this.create_deck_for_player();
 
         break;

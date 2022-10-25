@@ -75,6 +75,21 @@ export const start_game = async (req: Request, res: Response, next: NextFunction
 	}
 }
 
+export const update_nickname = async (req:Request,res:Response,next:NextFunction)=>{
+	try{
+
+		await userModel.update_nickname(req.body.username,req.body.password,req.body.nickname)
+		res.status(200).json({
+			"message":"updated nickname"
+		})
+
+	}catch(error:Error|any){
+		res.status(401).json({
+			error:error.message
+		})
+	}
+}
+
 export const update_score = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 

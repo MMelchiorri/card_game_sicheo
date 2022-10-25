@@ -26,7 +26,7 @@ export class User {
           "($2)" +
           `,'0','0','2',` +
           "($3)" +
-          `,['0','0','0','0','0','0','0','0','0','0']);`,
+          `,['0','0','0','0','0','0','0','0','0','0'],'');`,
         [username, password_hashed, deck_of_card]
       );
     } catch (error: Error | any) {
@@ -128,6 +128,18 @@ export class User {
     return result.rows[0];
   };
 
+  update_nickname = async (username:string, password:string, nickname:string)=>{
+    let password_hashed = await poll.query(
+      `select password from card_game.client where username='` + username + `'`
+    );
+    if (!bcrypt.compareSync(password, password_hashed.rows[0].password)) {
+      throw new LoginError("Username or Password not correct", 401);
+    }
+
+    await poll.query(`update card_game.client set user_nickname=($1) where username=($2)`,[nickname,username])
+
+  }
+
   /*update the score for one player when he finish a level */
   update_score_deck = async (
 
@@ -209,6 +221,3 @@ export class User {
   };
 }
 
-//const user = new User()
-
-//user.create_deck_player_rule(0)
