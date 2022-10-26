@@ -215,8 +215,9 @@ export class User {
   /*get score of all the player */
   get_score = async () => {
     const result = await poll.query(
-      `select username,score from card_game.client order by score desc`
+      `select username, global_score from card_game.client order by global_score desc`
     );
+    console.log(result)
     return result.rows;
   };
 }
