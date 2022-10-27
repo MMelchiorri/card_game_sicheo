@@ -26,7 +26,7 @@ export class User {
           "($2)" +
           `,'0','0','2',` +
           "($3)" +
-          `,['0','0','0','0','0','0','0','0','0','0'],'');`,
+          `,['0','0','0','0','0','0','0','0','0','0'],'','');`,
         [username, password_hashed, deck_of_card]
       )
   };
@@ -34,7 +34,7 @@ export class User {
   /*check if user exists and the password is correct */
   sign_in = async (username: string, password: string) => {
     let result = await poll.query(
-      `select username,global_score,level_progress,nickname,bonus from card_game.client where username='` +
+      `select username,global_score,level_progress,nickname,avatar,bonus from card_game.client where username='` +
         username +
         `'`
     );
@@ -125,18 +125,6 @@ export class User {
     return result.rows[0];
   };
 
-  update_nickname = async (username:string, password:string, nickname:string)=>{
-    let password_hashed = await poll.query(
-      `select password from card_game.client where username='` + username + `'`
-    );
-    if (!bcrypt.compareSync(password, password_hashed.rows[0].password)) {
-      throw new LoginError("Username or Password not correct", 401);
-    }
-
-    await poll.query(`update card_game.client set nickname=($1) where username=($2)`,[nickname,username])
-
-  }
-
   /*update the score for one player when he finish a level */
   update_score_deck = async (
 
@@ -207,10 +195,32 @@ export class User {
 
   };
 
+  update_nickname = async (username:string, password:string, nickname:string,avatar:string)=>{
+    let password_hashed = await poll.query(
+      `select password from card_game.client where username='` + username + `'`
+    );
+    if (!bcrypt.compareSync(password, password_hashed.rows[0].password)) {
+      throw new LoginError("Username or Password not correct", 401);
+    }
+
+    let user_nickname = await poll.query(`select nickname from card_game.client where nickname=($1)`,[nickname])
+
+    console.log(user_nickname)
+
+    if(user_nickname.rows.length == 0){
+      await poll.query(`update card_game.client set nickname=($1),avatar=($2) where username=($3)`,[nickname,avatar,username])
+
+    }else{
+      throw new Error("nickname already exists");
+      
+    }
+
+  }
+
   /*get score of all the player */
   get_score = async () => {
     const result = await poll.query(
-      `select username, global_score,level_progress from card_game.client order by global_score desc`
+      `select nickname, global_score,level_progress from card_game.client order by global_score desc`
     );
     console.log(result.rows)
     return result.rows;
