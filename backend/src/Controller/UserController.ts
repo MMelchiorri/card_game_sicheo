@@ -113,7 +113,6 @@ export const get_score = async (req: Request, res: Response, next: NextFunction)
 	try {
 
 		const result = await userModel.get_score()
-		console.log('**************',result)
 		res.status(200).json({
 			"message": "score retrivied",
 			data: [...result]

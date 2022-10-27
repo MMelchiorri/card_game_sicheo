@@ -13,7 +13,7 @@ export class User {
 
   /* add user to the database */
   sign_up = async (username: string, password: string) => {
-    try {
+
       const salt = bcrypt.genSaltSync(parseInt(config.SALT as string, 10));
       const password_hashed = bcrypt.hashSync(password, salt);
 
@@ -28,16 +28,13 @@ export class User {
           "($3)" +
           `,['0','0','0','0','0','0','0','0','0','0'],'');`,
         [username, password_hashed, deck_of_card]
-      );
-    } catch (error: Error | any) {
-      throw new Error(error.message);
-    }
+      )
   };
 
   /*check if user exists and the password is correct */
   sign_in = async (username: string, password: string) => {
     let result = await poll.query(
-      `select username,global_score,level_progress,bonus from card_game.client where username='` +
+      `select username,global_score,level_progress,nickname,bonus from card_game.client where username='` +
         username +
         `'`
     );
@@ -136,7 +133,7 @@ export class User {
       throw new LoginError("Username or Password not correct", 401);
     }
 
-    await poll.query(`update card_game.client set user_nickname=($1) where username=($2)`,[nickname,username])
+    await poll.query(`update card_game.client set nickname=($1) where username=($2)`,[nickname,username])
 
   }
 
@@ -180,12 +177,10 @@ export class User {
         `'`
     );
 
+    level_progress.rows[0].level_progress += 1
 
-    number_of_trials.rows[0].first_trials[
-      level_progress.rows[0].level_progress
-    ] += 1;
 
-    level_progress.rows[0].level_progress += 1;
+    number_of_trials.rows[0].first_trials[level_progress.rows[0].level_progress] += 1;
 
     global_score.rows[0].global_score += score
 
@@ -215,9 +210,9 @@ export class User {
   /*get score of all the player */
   get_score = async () => {
     const result = await poll.query(
-      `select username, global_score from card_game.client order by global_score desc`
+      `select username, global_score,level_progress from card_game.client order by global_score desc`
     );
-    console.log(result)
+    console.log(result.rows)
     return result.rows;
   };
 }

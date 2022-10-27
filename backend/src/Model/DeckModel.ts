@@ -42,11 +42,6 @@ export default class Deck {
 	}
 
 	create_deck_for_player(): any {
-    console.log(this.players_bot_1_card)
-    console.log(this.players_bot_2_card)
-    console.log(this.players_bot_3_card)
-    console.log(this.players_bot_4_card)
-    console.log(this.players_user_card)
 		var index_of_player_deck = 0;
 		var index_of_bot_1 = 0;
 		var index_of_bot_2 = 0;
@@ -101,7 +96,6 @@ export default class Deck {
 		this.deck.splice(0, 1)
 		this.deck.push(val);
 		this.deck = [...new Set(this.deck)] //check unique element in array
-    console.log('*****',this.deck)
 
 	}
 
@@ -208,9 +202,9 @@ export default class Deck {
 						this.deck[i] == "S05" ||
 						this.deck[i] == "S11" ||
 						this.deck[i] == "H13" ||
-						this.deck[i] == "C12" ||
+						this.deck[i] == "C11" ||
 						this.deck[i] == "H02" ||
-						this.deck[i] == "D10  "
+						this.deck[i] == "D10"
 					) {
 						this.players_user_card.push(this.deck[i]);
 					}
@@ -237,7 +231,7 @@ export default class Deck {
 						this.deck[i] == "S01" ||
 						this.deck[i] == "C04" ||
 						this.deck[i] == "H09" ||
-						this.deck[i] == "H05" ||
+						this.deck[i] == "D04" ||
 						this.deck[i] == "D06"
 					) {
 						this.players_bot_2_card.push(this.deck[i]);
@@ -249,7 +243,7 @@ export default class Deck {
 						this.deck[i] == "C07" ||
 						this.deck[i] == "H03" ||
 						this.deck[i] == "C02" ||
-						this.deck[i] == "D04" ||
+						this.deck[i] == "D05" ||
 						this.deck[i] == "S04" ||
 						this.deck[i] == "H10" ||
 						this.deck[i] == "C03"
@@ -289,7 +283,7 @@ export default class Deck {
 						this.deck[i] == "S03" ||
 						this.deck[i] == "D12" ||
 						this.deck[i] == "D07" ||
-						this.deck[i] == "S6"
+						this.deck[i] == "S06"
 					) {
 						this.players_user_card.push(this.deck[i]);
 					}
@@ -695,7 +689,7 @@ export default class Deck {
 				for (let i = 0; i <= this.deck.length; i++) {
 
 					if (
-						this.deck[i] == "H1" ||
+						this.deck[i] == "H01" ||
 						this.deck[i] == "S04" ||
 						this.deck[i] == "D10" ||
 						this.deck[i] == "C13" ||
