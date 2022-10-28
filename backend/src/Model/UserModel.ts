@@ -28,7 +28,7 @@ export class User {
           "($3)" +
           `,['0','0','0','0','0','0','0','0','0','0'],'','');`,
         [username, password_hashed, deck_of_card]
-      )
+      );
   };
 
   /*check if user exists and the password is correct */
@@ -165,12 +165,12 @@ export class User {
         `'`
     );
 
-    level_progress.rows[0].level_progress += 1
+    level_progress.rows[0].level_progress += 1;
 
 
     number_of_trials.rows[0].first_trials[level_progress.rows[0].level_progress] += 1;
 
-    global_score.rows[0].global_score += score
+    global_score.rows[0].global_score += score;
 
     deck_level.rows[0].deck_level = this.deck.create_deck_for_level(
       level_progress.rows[0].level_progress
@@ -184,7 +184,7 @@ export class User {
         deck_level.rows[0].deck_level,
         number_of_trials.rows[0].first_trials,
         username,
-      ])
+      ]);
 
       const result = await poll.query(
         `select level_progress,global_score from card_game.client where username='` +
@@ -203,12 +203,17 @@ export class User {
       throw new LoginError("Username or Password not correct", 401);
     }
 
-    let user_nickname = await poll.query(`select nickname from card_game.client where nickname=($1)`,[nickname])
+    if(!(/^[a-zA-Z]{4,8}$/.test(nickname))){
+      throw new Error("Nickname non valido, inserisci un nickname valido tra 4 e 8 caratteri");
+      
+    }
 
-    console.log(user_nickname)
+    let user_nickname = await poll.query(`select nickname from card_game.client where nickname=($1)`,[nickname]);
+
+    
 
     if(user_nickname.rows.length == 0){
-      await poll.query(`update card_game.client set nickname=($1),avatar=($2) where username=($3)`,[nickname,avatar,username])
+      await poll.query(`update card_game.client set nickname=($1),avatar=($2) where username=($3)`,[nickname,avatar,username]);
 
     }else{
       throw new Error("nickname already exists");
@@ -222,7 +227,6 @@ export class User {
     const result = await poll.query(
       `select nickname, global_score,level_progress from card_game.client order by global_score desc`
     );
-    console.log(result.rows)
     return result.rows;
   };
 }

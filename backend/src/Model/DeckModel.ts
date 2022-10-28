@@ -52,34 +52,34 @@ export default class Deck {
 		for (let i = 1; i <= this.deck.length - 1; i++) {
 
 			if (i % 5 == 1 && index_of_bot_1 < 10) {
-				let card_swap = this.deck[i]
-				let index_of_bot_1_card = this.deck.indexOf(this.players_bot_1_card[index_of_bot_1])
-				this.deck[i] = this.deck[index_of_bot_1_card]
-				this.deck[index_of_bot_1_card] = card_swap
-				index_of_bot_1++
+				let card_swap = this.deck[i];
+				let index_of_bot_1_card = this.deck.indexOf(this.players_bot_1_card[index_of_bot_1]);
+				this.deck[i] = this.deck[index_of_bot_1_card];
+				this.deck[index_of_bot_1_card] = card_swap;
+				index_of_bot_1++;
 			}
 			if (i % 5 == 2 && index_of_bot_2 < 10) {
-				let card_swap = this.deck[i]
-				let index_of_bot_2_card = this.deck.indexOf(this.players_bot_2_card[index_of_bot_2])
-				this.deck[i] = this.deck[index_of_bot_2_card]
-				this.deck[index_of_bot_2_card] = card_swap
-				index_of_bot_2++
+				let card_swap = this.deck[i];
+				let index_of_bot_2_card = this.deck.indexOf(this.players_bot_2_card[index_of_bot_2]);
+				this.deck[i] = this.deck[index_of_bot_2_card];
+				this.deck[index_of_bot_2_card] = card_swap;
+				index_of_bot_2++;
 			}
 			if (i % 5 == 3 && index_of_bot_3 < 10) {
 
-				let card_swap = this.deck[i]
-				let index_of_bot_3_card = this.deck.indexOf(this.players_bot_3_card[index_of_bot_3])
-				this.deck[i] = this.deck[index_of_bot_3_card]
-				this.deck[index_of_bot_3_card] = card_swap
-				index_of_bot_3++
+				let card_swap = this.deck[i];
+				let index_of_bot_3_card = this.deck.indexOf(this.players_bot_3_card[index_of_bot_3]);
+				this.deck[i] = this.deck[index_of_bot_3_card];
+				this.deck[index_of_bot_3_card] = card_swap;
+				index_of_bot_3++;
 			}
 			if (i % 5 == 4 && index_of_bot_4 < 10) {
 
-				let card_swap = this.deck[i]
-				let index_of_bot_4_card = this.deck.indexOf(this.players_bot_4_card[index_of_bot_4])
-				this.deck[i] = this.deck[index_of_bot_4_card]
-				this.deck[index_of_bot_4_card] = card_swap
-				index_of_bot_4++
+				let card_swap = this.deck[i];
+				let index_of_bot_4_card = this.deck.indexOf(this.players_bot_4_card[index_of_bot_4]);
+				this.deck[i] = this.deck[index_of_bot_4_card];
+				this.deck[index_of_bot_4_card] = card_swap;
+				index_of_bot_4++;
 			}
 			if (i % 5 == 0 && index_of_player_deck < 10) {
 
@@ -92,8 +92,8 @@ export default class Deck {
 				index_of_player_deck++;
 			}
 		}
-		let val = this.deck[0]
-		this.deck.splice(0, 1)
+		let val = this.deck[0];
+		this.deck.splice(0, 1);
 		this.deck.push(val);
 		this.deck = [...new Set(this.deck)] //check unique element in array
 
