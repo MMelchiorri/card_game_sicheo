@@ -1,5 +1,6 @@
 import express from "express";
 import user_router from "./Routes/UserRoutes";
+import start_game_router from "./Routes/PlayRoutes";
 import {
 	connection
 } from "./Database/connection_db";
@@ -9,6 +10,7 @@ import {
 import cors from 'cors'
 import { handleError } from "./Middleware/ErrorMiddleware";
 import config from "./config";
+import path from 'path'
 
 
 const app = express();
@@ -16,11 +18,6 @@ const app = express();
 const PORT = config.PORT_SERVER ||3000;
 
 app.use(express.json());
-
-app.listen(PORT, () => {
-	console.log("\nServer is listening on port: " + PORT);
-
-});
 
 connection()
 
@@ -32,6 +29,13 @@ app.use(cors({
 
 app.use('/user', user_router)
 
+app.use('/brain_clash',express.static(path.join(__dirname, '../../sicheo-card-game')))
+
 app.use(handleError)
+
+app.listen(PORT, () => {
+	console.log("\nServer is listening on port: " + PORT);
+
+});
 
 export default app
