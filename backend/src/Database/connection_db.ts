@@ -2,11 +2,11 @@ import pg from 'pg'
 import config from '../config'
 
 export const poll = new pg.Pool({
-    user:config.USER,
-    host:config.HOST,
-    database:config.DATABASE,
+    user:config.USER || 'crate',
+    host:config.HOST || 'localhost',
+    database:config.DATABASE || 'card_game',
     password:config.PSW,
-    port:parseInt(config.PORT_DB as string,10)
+    port:parseInt(config.PORT_DB as string,10) || 5433
 
 
 })
