@@ -1,21 +1,22 @@
 import express from "express";
 import user_router from "./Routes/UserRoutes";
-import start_game_router from "./Routes/PlayRoutes";
 import {
 	connection
 } from "./Database/connection_db";
 import {
 	create_table_user
 } from "./Database/create_table";
-import cors from 'cors'
-import { handleError } from "./Middleware/ErrorMiddleware";
+import {
+	handleError
+} from "./Middleware/ErrorMiddleware";
 import config from "./config";
 import path from 'path'
+import cors from 'cors'
 
 
 const app = express();
 
-const PORT = config.PORT_SERVER ||3000;
+const PORT = config.PORT_SERVER || 5000;
 
 app.use(express.json());
 
@@ -29,7 +30,7 @@ app.use(cors({
 
 app.use('/user', user_router)
 
-app.use('/brain_clash',express.static(path.join(__dirname, '../../sicheo-card-game')))
+app.use('/brain_clash', express.static(path.join(__dirname, '../../sicheo-card-game')))
 
 app.use(handleError)
 

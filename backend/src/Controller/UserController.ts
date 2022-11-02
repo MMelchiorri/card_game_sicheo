@@ -84,7 +84,7 @@ export const update_nickname = async (req:Request,res:Response,next:NextFunction
 		});
 
 	}catch(error:Error|any){
-		res.status(401).json({
+		res.status(error.status).json({
 			error:error.message
 		});
 	}

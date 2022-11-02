@@ -1,10 +1,9 @@
 import bcrypt from "bcrypt";
 import config from "../config";
 import { poll } from "../Database/connection_db";
-import { NumberError } from "../Error/number.error";
 import { LoginError } from "../Error/login.error";
 import Deck from "./DeckModel";
-import { Pool } from "pg";
+import { NicknameError } from "../Error/nickname.error";
 
 export class User {
   deck = new Deck();
@@ -204,7 +203,7 @@ export class User {
     }
 
     if(!(/^[a-zA-Z]{4,8}$/.test(nickname))){
-      throw new Error("Nickname non valido, inserisci un nickname valido tra 4 e 8 caratteri");
+      throw new NicknameError("Nickname non valido, inserisci un nickname valido tra 4 e 8 caratteri",400);
       
     }
 
@@ -216,7 +215,7 @@ export class User {
       await poll.query(`update card_game.client set nickname=($1),avatar=($2) where username=($3)`,[nickname,avatar,username]);
 
     }else{
-      throw new Error("nickname already exists");
+      throw new NicknameError("nickname already exists",403);
       
     }
 
