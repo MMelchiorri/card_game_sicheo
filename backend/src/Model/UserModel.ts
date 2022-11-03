@@ -73,12 +73,19 @@ export class User {
         username +
         `'`
     );
+    console.log('start level',level_progress.rows[0])
+    if(level_progress.rows[0].level_progress >= 9){
+      throw new Error("Level Max Reached");
+      
+    }
 
     let deck_level = await poll.query(
       `select deck_level from card_game.client where username='` +
         username +
         `'`
     );
+
+    console.log(deck_level.rows[0].deck_level)
 
     let global_score = await poll.query(
       `select global_score from card_game.client where username='` +
@@ -164,15 +171,14 @@ export class User {
         `'`
     );
 
-    level_progress.rows[0].level_progress += 1;
-
-
     number_of_trials.rows[0].first_trials[level_progress.rows[0].level_progress] += 1;
+
+    level_progress.rows[0].level_progress += 1;
 
     global_score.rows[0].global_score += score;
 
     deck_level.rows[0].deck_level = this.deck.create_deck_for_level(
-      level_progress.rows[0].level_progress
+      level_progress.rows[0].level_progressna
     );
 
     await poll.query(
@@ -190,6 +196,8 @@ export class User {
           username +
           `'`
       );
+
+      console.log('finish level',result.rows[0].level_progress)
       return result.rows[0];
 
   };
