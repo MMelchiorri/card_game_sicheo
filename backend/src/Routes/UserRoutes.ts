@@ -5,8 +5,6 @@ import * as user_controller from '../Controller/UserController'
 
 const user_router = Router()
 
-
-
 user_router.route('/').post(user_controller.sign_up)
 
 user_router.route('/login').post(user_controller.sign_in)
