@@ -5,13 +5,18 @@ import { LoginError } from "../Error/login.error";
 import Deck from "./DeckModel";
 import { NicknameError } from "../Error/nickname.error";
 import { ScoreError } from "../Error/score.error";
+import { Query } from "pg";
 
 export class User {
   deck = new Deck();
 
   constructor() {}
 
-  /* add user to the database */
+ /**
+  * Used for add a user in the database
+  * @param username 
+  * @param password 
+  */
   sign_up = async (username: string, password: string) => {
 
       const salt = bcrypt.genSaltSync(parseInt(config.SALT as string, 10));
@@ -31,8 +36,13 @@ export class User {
       );
   };
 
-  /*check if user exists and the password is correct */
-  sign_in = async (username: string, password: string) => {
+/**
+ * Api for login a user in the application
+ * @param username 
+ * @param password 
+ * @returns 
+ */
+  sign_in = async (username: string, password: string):Promise<Query> => {
     let result = await poll.query(
       `select username,global_score,level_progress,nickname,avatar,bonus from card_game.client where username='` +
         username +
@@ -52,7 +62,13 @@ export class User {
     return result.rows[0];
   };
 
-  /* increment number of trials of a level when stars a new game for that level */
+/**
+ * increment number of trials of a level when stars a new game for that level
+ * @param username 
+ * @param password 
+ * @returns 
+ */
+
   start_game = async (username: string, password: string) => {
     let password_hashed = await poll.query(
       `select password from card_game.client where username='` + username + `'`
@@ -131,7 +147,14 @@ export class User {
     return result.rows[0];
   };
 
-  /*update the score for one player when he finish a level */
+
+  /**
+   * update the score and the deck for one player when he finish a level
+   * @param username 
+   * @param password 
+   * @param score 
+   * @returns 
+   */
   update_score_deck = async (
 
     username: string,
@@ -206,6 +229,14 @@ export class User {
 
   };
 
+  /**
+   * Api for update nickname and avat of a player
+   * @param username 
+   * @param password 
+   * @param nickname 
+   * @param avatar 
+   */
+
   update_nickname = async (username:string, password:string, nickname:string,avatar:string)=>{
     let password_hashed = await poll.query(
       `select password from card_game.client where username='` + username + `'`
@@ -233,7 +264,10 @@ export class User {
 
   }
 
-  /*get score of all the player */
+  /**
+   * Api for the scoreboard of all the user
+   * @returns 
+   */
   get_score = async () => {
     const result = await poll.query(
       `select nickname, global_score,level_progress from card_game.client order by global_score desc`

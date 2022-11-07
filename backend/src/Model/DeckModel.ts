@@ -5,6 +5,13 @@ export default class Deck {
 	players_bot_3_card: string[] = [];
 	players_bot_4_card: string[] = [];
 	players_user_card: string[] = [];
+
+	static create_a_deck():Deck {
+
+		let deck = new Deck();
+		return deck;
+
+	}
   
 	constructor() {
 	  const suites = ["C", "D", "H", "S"];
@@ -30,6 +37,8 @@ export default class Deck {
 		});
 	  });
 	}
+
+
   
 	shuffleDeck(): Deck {
 	  for (let i: number = this.deck.length - 1; i >= 0; i--) {

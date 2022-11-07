@@ -109,5 +109,5 @@ dist
 #Building directory
 dist/
 
-#certificate
-certificate/
+#front_end build directory
+static/
