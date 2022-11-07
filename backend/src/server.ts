@@ -45,6 +45,8 @@ app.use(cors({
 	origin: "*"
 }))
 
+console.log(__dirname)
+
 
 app.use('/user', user_router)
 

@@ -4,6 +4,7 @@ import { poll } from "../Database/connection_db";
 import { LoginError } from "../Error/login.error";
 import Deck from "./DeckModel";
 import { NicknameError } from "../Error/nickname.error";
+import { ScoreError } from "../Error/score.error";
 
 export class User {
   deck = new Deck();
@@ -73,7 +74,7 @@ export class User {
         username +
         `'`
     );
-    console.log('start level',level_progress.rows[0])
+
     if(level_progress.rows[0].level_progress >= 9){
       throw new Error("Level Max Reached");
       
@@ -85,7 +86,6 @@ export class User {
         `'`
     );
 
-    console.log(deck_level.rows[0].deck_level)
 
     let global_score = await poll.query(
       `select global_score from card_game.client where username='` +
@@ -171,6 +171,11 @@ export class User {
         `'`
     );
 
+    if(score > 100){
+      throw new ScoreError("Score for single game too high",400);
+      
+    }
+
     number_of_trials.rows[0].first_trials[level_progress.rows[0].level_progress] += 1;
 
     level_progress.rows[0].level_progress += 1;
@@ -197,7 +202,6 @@ export class User {
           `'`
       );
 
-      console.log('finish level',result.rows[0].level_progress)
       return result.rows[0];
 
   };
