@@ -9,31 +9,17 @@ import {
 import {
 	handleError
 } from "./Middleware/ErrorMiddleware";
-import https from 'https'
 import config from "./config";
 import path from 'path'
 import cors from 'cors'
-import fs from 'fs'
+import http from 'http'
 
 
 const app = express();
 
 const PORT = config.PORT_SERVER || 5000;
 
-/*const options ={
-	key: fs.readFileSync(path.join(__dirname,'../certificate/key.pem')),
-	cert: fs.readFileSync('../certificate/cert.pem')
-};*/
-
-let certificate_folder = path.join(__dirname,'../certificate/')
-
 let front_end_folder = path.join(__dirname,'../static')
-
-const options = {
-	key:fs.readFileSync(certificate_folder+'key.pem'),
-	cert:fs.readFileSync(certificate_folder+'cert.pem')
-
-}
 
 app.use(express.json());
 
@@ -45,15 +31,12 @@ app.use(cors({
 	origin: "*"
 }))
 
-console.log(__dirname)
-
-
 app.use('/user', user_router)
 
-app.use('/brain_clash', express.static(path.join(front_end_folder)))
+app.use('/BrainClash', express.static(path.join(front_end_folder)))
 
 app.use(handleError)
 
-https.createServer(options,app).listen(PORT,()=>{
+http.createServer(app).listen(PORT,()=>{
 	console.log("\nServer is listening on port: " + PORT);
 })
