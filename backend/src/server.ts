@@ -14,12 +14,13 @@ import path from 'path'
 import cors from 'cors'
 import http from 'http'
 
-
 const app = express();
 
 const PORT = config.PORT_SERVER || 5000;
 
-let front_end_folder = path.join(__dirname,'../static')
+let front_end_folder = path.join(__dirname,'../static/sicheo-card-game')
+
+console.log(front_end_folder)
 
 app.use(express.json());
 

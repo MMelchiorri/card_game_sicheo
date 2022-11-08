@@ -111,3 +111,5 @@ dist/
 
 #front_end build directory
 static/
+
+test/

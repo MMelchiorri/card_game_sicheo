@@ -12,42 +12,49 @@ export class User {
 
   constructor() {}
 
- /**
-  * Used for add a user in the database
-  * @param username 
-  * @param password 
-  */
+  /**
+   * Used for add a user in the database
+   * @param username
+   * @param password
+   */
   sign_up = async (username: string, password: string) => {
+    const salt = bcrypt.genSaltSync(parseInt(config.SALT as string, 10));
+    const password_hashed = bcrypt.hashSync(password, salt);
 
-      const salt = bcrypt.genSaltSync(parseInt(config.SALT as string, 10));
-      const password_hashed = bcrypt.hashSync(password, salt);
+    let deck_of_card = this.deck.create_deck_for_level(0);
 
-      let deck_of_card = this.deck.create_deck_for_level(0);
-
-      await poll.query(
-        `insert into "card_game"."client" values (` +
-          "($1)" +
-          `,` +
-          "($2)" +
-          `,'0','0','2',` +
-          "($3)" +
-          `,['0','0','0','0','0','0','0','0','0','0'],'','');`,
-        [username, password_hashed, deck_of_card]
-      );
+    await poll.query(
+      `insert into "card_game"."client" values (` +
+        "($1)" +
+        `,` +
+        "($2)" +
+        `,'0','0','2',` +
+        "($3)" +
+        `,['0','0','0','0','0','0','0','0','0','0'],'','');`,
+      [username, password_hashed, deck_of_card]
+    );
   };
 
-/**
- * Api for login a user in the application
- * @param username 
- * @param password 
- * @returns 
- */
-  sign_in = async (username: string, password: string):Promise<Query> => {
+  /**
+   * Api for login a user in the application
+   * @param username
+   * @param password
+   * @returns
+   */
+  sign_in = async (username: string, password: string): Promise<Query> => {
     let result = await poll.query(
       `select username,global_score,level_progress,nickname,avatar,bonus from card_game.client where username='` +
         username +
         `'`
     );
+
+    let deck_level = await poll.query(
+      `select deck_level from card_game.client where username='` +
+        username +
+        `'`
+    );
+
+    let number_of_trials = await poll.query(`select first_trials from card_game.client where username='`+username+`'`)
 
     const password_hashed = await poll.query(
       `select password from card_game.client where username='` + username + `'`
@@ -59,15 +66,34 @@ export class User {
       throw new LoginError("Username or Password not correct", 401);
     }
 
+    if (
+      result.rows[0].bonus == 0 &&
+      number_of_trials.rows[0].first_trials[result.rows[0].level_progress] != 0
+    ) {
+      result.rows[0].level_progress++;
+      deck_level.rows[0].deck_level = this.deck.create_deck_for_level(
+        result.rows[0].level_progress
+      );
+
+      await poll.query(`update card_game.client set level_progress = ($1), deck_level= ($2) where username = ($3) `,[result.rows[0].level_progress,deck_level.rows[0].deck_level,username])
+
+      result = await poll.query(
+        `select username,global_score,level_progress,nickname,avatar,bonus from card_game.client where username='` +
+          username +
+          `'`
+      );
+
+    }
+
     return result.rows[0];
   };
 
-/**
- * increment number of trials of a level when stars a new game for that level
- * @param username 
- * @param password 
- * @returns 
- */
+  /**
+   * increment number of trials of a level when stars a new game for that level
+   * @param username
+   * @param password
+   * @returns
+   */
 
   start_game = async (username: string, password: string) => {
     let password_hashed = await poll.query(
@@ -91,9 +117,8 @@ export class User {
         `'`
     );
 
-    if(level_progress.rows[0].level_progress >= 9){
+    if (level_progress.rows[0].level_progress >= 9) {
       throw new Error("Level Max Reached");
-      
     }
 
     let deck_level = await poll.query(
@@ -101,7 +126,6 @@ export class User {
         username +
         `'`
     );
-
 
     let global_score = await poll.query(
       `select global_score from card_game.client where username='` +
@@ -120,12 +144,7 @@ export class User {
     ) {
       if (bonus.rows[0].bonus > 0) {
         bonus.rows[0].bonus -= 1;
-      } else {
-        level_progress.rows[0].level_progress += 1;
-        deck_level.rows[0].deck_level = this.deck.create_deck_for_level(
-          level_progress.rows[0].level_progress
-        );
-      }
+      } 
     }
 
     await poll.query(
@@ -147,24 +166,20 @@ export class User {
     return result.rows[0];
   };
 
-
   /**
    * update the score and the deck for one player when he finish a level
-   * @param username 
-   * @param password 
-   * @param score 
-   * @returns 
+   * @param username
+   * @param password
+   * @param score
+   * @returns
    */
   update_score_deck = async (
-
     username: string,
     password: string,
-    score: number,
+    score: number
   ) => {
     const password_ = await poll.query(
-      `select password from card_game.client where username='` +
-        username +
-        `'`
+      `select password from card_game.client where username='` + username + `'`
     );
     if (!bcrypt.compareSync(password, password_.rows[0].password)) {
       throw new LoginError("Username or Password not correct", 401);
@@ -187,19 +202,19 @@ export class User {
         `'`
     );
 
-    
     let level_progress = await poll.query(
       `select level_progress from card_game.client where username='` +
         username +
         `'`
     );
 
-    if(score > 100){
-      throw new ScoreError("Score for single game too high",400);
-      
+    if (score > 100) {
+      throw new ScoreError("Score for single game too high", 400);
     }
 
-    number_of_trials.rows[0].first_trials[level_progress.rows[0].level_progress] += 1;
+    number_of_trials.rows[0].first_trials[
+      level_progress.rows[0].level_progress
+    ] += 1;
 
     level_progress.rows[0].level_progress += 1;
 
@@ -217,27 +232,32 @@ export class User {
         deck_level.rows[0].deck_level,
         number_of_trials.rows[0].first_trials,
         username,
-      ]);
+      ]
+    );
 
-      const result = await poll.query(
-        `select level_progress,global_score from card_game.client where username='` +
-          username +
-          `'`
-      );
+    const result = await poll.query(
+      `select level_progress,global_score from card_game.client where username='` +
+        username +
+        `'`
+    );
 
-      return result.rows[0];
-
+    return result.rows[0];
   };
 
   /**
    * Api for update nickname and avat of a player
-   * @param username 
-   * @param password 
-   * @param nickname 
-   * @param avatar 
+   * @param username
+   * @param password
+   * @param nickname
+   * @param avatar
    */
 
-  update_nickname = async (username:string, password:string, nickname:string,avatar:string)=>{
+  update_nickname = async (
+    username: string,
+    password: string,
+    nickname: string,
+    avatar: string
+  ) => {
     let password_hashed = await poll.query(
       `select password from card_game.client where username='` + username + `'`
     );
@@ -245,28 +265,31 @@ export class User {
       throw new LoginError("Username or Password not correct", 401);
     }
 
-    if(!(/^[a-zA-Z]{4,8}$/.test(nickname))){
-      throw new NicknameError("Nickname non valido, inserisci un nickname valido tra 4 e 8 caratteri",400);
-      
+    if (!/^[a-zA-Z]{4,8}$/.test(nickname)) {
+      throw new NicknameError(
+        "Nickname non valido, inserisci un nickname valido tra 4 e 8 caratteri",
+        400
+      );
     }
 
-    let user_nickname = await poll.query(`select nickname from card_game.client where nickname=($1)`,[nickname]);
+    let user_nickname = await poll.query(
+      `select nickname from card_game.client where nickname=($1)`,
+      [nickname]
+    );
 
-    
-
-    if(user_nickname.rows.length == 0){
-      await poll.query(`update card_game.client set nickname=($1),avatar=($2) where username=($3)`,[nickname,avatar,username]);
-
-    }else{
-      throw new NicknameError("nickname already exists",403);
-      
+    if (user_nickname.rows.length == 0) {
+      await poll.query(
+        `update card_game.client set nickname=($1),avatar=($2) where username=($3)`,
+        [nickname, avatar, username]
+      );
+    } else {
+      throw new NicknameError("nickname already exists", 403);
     }
-
-  }
+  };
 
   /**
    * Api for the scoreboard of all the user
-   * @returns 
+   * @returns
    */
   get_score = async () => {
     const result = await poll.query(
@@ -275,4 +298,3 @@ export class User {
     return result.rows;
   };
 }
-
