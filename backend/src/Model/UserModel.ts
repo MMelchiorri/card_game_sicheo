@@ -28,9 +28,9 @@ export class User {
         "($1)" +
         `,` +
         "($2)" +
-        `,'0','0','2',` +
+        `,0,0,2,` +
         "($3)" +
-        `,['0','0','0','0','0','0','0','0','0','0'],'','');`,
+        `,[0,0,0,0,0,0,0,0,0,0],'',0);`,
       [username, password_hashed, deck_of_card]
     );
   };
@@ -256,7 +256,7 @@ export class User {
     username: string,
     password: string,
     nickname: string,
-    avatar: string
+    avatar: number
   ) => {
     let password_hashed = await poll.query(
       `select password from card_game.client where username='` + username + `'`
@@ -293,7 +293,7 @@ export class User {
    */
   get_score = async () => {
     const result = await poll.query(
-      `select nickname, global_score,level_progress from card_game.client order by global_score desc`
+      `select nickname, global_score,level_progress,avatar from card_game.client order by global_score desc`
     );
     return result.rows;
   };

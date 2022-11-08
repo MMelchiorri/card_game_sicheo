@@ -10,3 +10,4 @@ test('expect deck has been shuffled',()=>{
     expect(deck.shuffleDeck().deck).not.toBe(Deck.create_a_deck().deck)
 
 })
+
