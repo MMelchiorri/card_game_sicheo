@@ -1,43 +1,35 @@
 import express from "express";
 import user_router from "./Routes/UserRoutes";
-import {
-	connection
-} from "./Database/connection_db";
-import {
-	create_table_user
-} from "./Database/create_table";
-import {
-	handleError
-} from "./Middleware/ErrorMiddleware";
+import { connection } from "./Database/connection_db";
+import { create_table_user } from "./Database/create_table";
+import { handleError } from "./Middleware/ErrorMiddleware";
 import config from "./config";
-import path from 'path'
-import cors from 'cors'
-import http from 'http'
+import path from "path";
+import cors from "cors";
+import http from "http";
 
 const app = express();
 
 const PORT = config.PORT_SERVER || 5000;
 
-let front_end_folder = path.join(__dirname,'../static/sicheo-card-game')
-
-console.log(front_end_folder)
+let front_end_folder = path.join(__dirname, "../static/sicheo-card-game");
 
 app.use(express.json());
 
-connection()
+connection();
 
-create_table_user()
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
-app.use(cors({
-	origin: "*"
-}))
+app.use("/user", user_router);
 
-app.use('/user', user_router)
+app.use("/BrainClash", express.static(path.join(front_end_folder)));
 
-app.use('/BrainClash', express.static(path.join(front_end_folder)))
+app.use(handleError);
 
-app.use(handleError)
-
-http.createServer(app).listen(PORT,()=>{
-	console.log("\nServer is listening on port: " + PORT);
-})
+http.createServer(app).listen(PORT, () => {
+  console.log("\nServer is listening on port: " + PORT);
+});

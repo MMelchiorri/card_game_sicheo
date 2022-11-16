@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import config from "../config";
-import { poll } from "../Database/connection_db";
+import { pool } from "../Database/connection_db";
 import { LoginError } from "../Error/login.error";
 import Deck from "./DeckModel";
 import { NicknameError } from "../Error/nickname.error";
 import { ScoreError } from "../Error/score.error";
 import { Query } from "pg";
 
-export class User {
+export default class User {
   deck = new Deck();
 
   constructor() {}
@@ -23,7 +23,7 @@ export class User {
 
     let deck_of_card = this.deck.create_deck_for_level(0);
 
-    await poll.query(
+    await pool.query(
       `insert into "card_game"."client" values (` +
         "($1)" +
         `,` +
@@ -42,21 +42,30 @@ export class User {
    * @returns
    */
   sign_in = async (username: string, password: string): Promise<Query> => {
-    let result = await poll.query(
+    let result = await pool.query(
       `select username,global_score,level_progress,nickname,avatar,bonus from card_game.client where username='` +
         username +
         `'`
     );
 
-    let deck_level = await poll.query(
+    if(result.rows[0].level_progress > 10){
+      throw new Error("Level Max Reached");
+      
+    }
+
+    let deck_level = await pool.query(
       `select deck_level from card_game.client where username='` +
         username +
         `'`
     );
 
-    let number_of_trials = await poll.query(`select first_trials from card_game.client where username='`+username+`'`)
+    let number_of_trials = await pool.query(
+      `select first_trials from card_game.client where username='` +
+        username +
+        `'`
+    );
 
-    const password_hashed = await poll.query(
+    const password_hashed = await pool.query(
       `select password from card_game.client where username='` + username + `'`
     );
     if (
@@ -64,6 +73,10 @@ export class User {
       !bcrypt.compareSync(password, password_hashed.rows[0].password)
     ) {
       throw new LoginError("Username or Password not correct", 401);
+    }
+
+    if(result.rows[0].level_progress>=10){
+      return result.rows[0];
     }
 
     if (
@@ -75,14 +88,16 @@ export class User {
         result.rows[0].level_progress
       );
 
-      await poll.query(`update card_game.client set level_progress = ($1), deck_level= ($2) where username = ($3) `,[result.rows[0].level_progress,deck_level.rows[0].deck_level,username])
+      await pool.query(
+        `update card_game.client set level_progress = ($1), deck_level= ($2) where username = ($3) `,
+        [result.rows[0].level_progress, deck_level.rows[0].deck_level, username]
+      );
 
-      result = await poll.query(
+      result = await pool.query(
         `select username,global_score,level_progress,nickname,avatar,bonus from card_game.client where username='` +
           username +
           `'`
       );
-
     }
 
     return result.rows[0];
@@ -96,38 +111,38 @@ export class User {
    */
 
   start_game = async (username: string, password: string) => {
-    let password_hashed = await poll.query(
+    let password_hashed = await pool.query(
       `select password from card_game.client where username='` + username + `'`
     );
     if (!bcrypt.compareSync(password, password_hashed.rows[0].password)) {
       throw new LoginError("Username or Password not correct", 401);
     }
-    let number_of_trials = await poll.query(
+    let number_of_trials = await pool.query(
       `select first_trials from card_game.client where username='` +
         username +
         `'`
     );
-    let bonus = await poll.query(
+    let bonus = await pool.query(
       `select bonus from card_game.client where username='` + username + `'`
     );
 
-    let level_progress = await poll.query(
+    let level_progress = await pool.query(
       `select level_progress from card_game.client where username='` +
         username +
         `'`
     );
 
-    if (level_progress.rows[0].level_progress >= 9) {
-      throw new Error("Level Max Reached");
+    if (level_progress.rows[0] >= 10) {
+      return;
     }
 
-    let deck_level = await poll.query(
+    let deck_level = await pool.query(
       `select deck_level from card_game.client where username='` +
         username +
         `'`
     );
 
-    let global_score = await poll.query(
+    let global_score = await pool.query(
       `select global_score from card_game.client where username='` +
         username +
         `'`
@@ -144,10 +159,10 @@ export class User {
     ) {
       if (bonus.rows[0].bonus > 0) {
         bonus.rows[0].bonus -= 1;
-      } 
+      }
     }
 
-    await poll.query(
+    await pool.query(
       `update card_game.client set global_score=($1), level_progress=($2), bonus=($3), deck_level=($4),first_trials=($5) where username=($6)`,
       [
         global_score.rows[0].global_score,
@@ -158,7 +173,7 @@ export class User {
         username,
       ]
     );
-    const result = await poll.query(
+    const result = await pool.query(
       `select deck_level,bonus,level_progress from card_game.client where username='` +
         username +
         `'`
@@ -178,31 +193,31 @@ export class User {
     password: string,
     score: number
   ) => {
-    const password_ = await poll.query(
+    const password_ = await pool.query(
       `select password from card_game.client where username='` + username + `'`
     );
     if (!bcrypt.compareSync(password, password_.rows[0].password)) {
       throw new LoginError("Username or Password not correct", 401);
     }
 
-    let deck_level = await poll.query(
+    let deck_level = await pool.query(
       `select deck_level from card_game.client where username='` +
         username +
         `'`
     );
 
-    let global_score = await poll.query(
+    let global_score = await pool.query(
       `select global_score from card_game.client where username='` +
         username +
         `'`
     );
-    let number_of_trials = await poll.query(
+    let number_of_trials = await pool.query(
       `select first_trials from card_game.client where username='` +
         username +
         `'`
     );
 
-    let level_progress = await poll.query(
+    let level_progress = await pool.query(
       `select level_progress from card_game.client where username='` +
         username +
         `'`
@@ -224,7 +239,7 @@ export class User {
       level_progress.rows[0].level_progressna
     );
 
-    await poll.query(
+    await pool.query(
       `update card_game.client set global_score=($1), level_progress=($2), deck_level=($3),first_trials=($4) where username=($5)`,
       [
         global_score.rows[0].global_score,
@@ -235,7 +250,7 @@ export class User {
       ]
     );
 
-    const result = await poll.query(
+    const result = await pool.query(
       `select level_progress,global_score from card_game.client where username='` +
         username +
         `'`
@@ -258,7 +273,7 @@ export class User {
     nickname: string,
     avatar: number
   ) => {
-    let password_hashed = await poll.query(
+    let password_hashed = await pool.query(
       `select password from card_game.client where username='` + username + `'`
     );
     if (!bcrypt.compareSync(password, password_hashed.rows[0].password)) {
@@ -272,13 +287,13 @@ export class User {
       );
     }
 
-    let user_nickname = await poll.query(
+    let user_nickname = await pool.query(
       `select nickname from card_game.client where nickname=($1)`,
       [nickname]
     );
 
     if (user_nickname.rows.length == 0) {
-      await poll.query(
+      await pool.query(
         `update card_game.client set nickname=($1),avatar=($2) where username=($3)`,
         [nickname, avatar, username]
       );
@@ -292,7 +307,7 @@ export class User {
    * @returns
    */
   get_score = async () => {
-    const result = await poll.query(
+    const result = await pool.query(
       `select nickname, global_score,level_progress,avatar from card_game.client order by global_score desc`
     );
     return result.rows;

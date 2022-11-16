@@ -10,9 +10,7 @@ import {
 	LoginError
 } from '../Error/login.error';
 
-import {
-	User
-} from '../Model/UserModel';
+import User from '../Model/UserModel';
 
 
 
