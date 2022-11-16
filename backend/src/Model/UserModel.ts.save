@@ -53,8 +53,11 @@ export class User {
         username +
         `'`
     );
-	
-    console.log('++++++++++++++++',result.rows[0]);
+
+    if(result.rows[0].level_progress > 10){
+
+	result.rows[0].level_progress 
+
     let number_of_trials = await poll.query(`select first_trials from card_game.client where username='`+username+`'`)
 
     const password_hashed = await poll.query(
@@ -65,13 +68,6 @@ export class User {
       !bcrypt.compareSync(password, password_hashed.rows[0].password)
     ) {
       throw new LoginError("Username or Password not correct", 401);
-    }
- 
-    if(result.rows[0].level_progress>=10){
-       console.log('************')
-        console.log(result.rows[0])
-        return result.rows[0];
-
     }
 
     if (
@@ -123,10 +119,10 @@ export class User {
         username +
         `'`
     );
-    if(level_progress.rows[0]>=10){
 
-	return;
 
+    if (level_progress.rows[0].level_progress > 9) {
+      throw new Error("Level Max Reached");
     }
 
     let deck_level = await poll.query(

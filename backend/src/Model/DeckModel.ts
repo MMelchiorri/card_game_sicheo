@@ -865,7 +865,7 @@ export default class Deck {
 		  this.players_bot_4_card = [];
 		  for (let i = 0; i <= this.deck.length; i++) {
 			if (
-			  this.deck[i] == "H1" ||
+			  this.deck[i] == "H01" ||
 			  this.deck[i] == "S04" ||
 			  this.deck[i] == "D10" ||
 			  this.deck[i] == "C13" ||
