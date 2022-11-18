@@ -56,7 +56,7 @@ export default class Deck {
 	  var index_of_bot_2 = 0;
 	  var index_of_bot_3 = 0;
 	  var index_of_bot_4 = 0;
-  
+
 	  for (let i = 1; i <= this.deck.length - 1; i++) {
 		if (i % 5 == 1 && index_of_bot_1 < 10) {
 		  let card_swap = this.deck[i];
