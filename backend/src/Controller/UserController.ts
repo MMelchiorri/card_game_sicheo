@@ -38,6 +38,9 @@ export const sign_in = async (req: Request, res: Response, next: NextFunction) =
 		});
 	} catch (error: Error | any) {
 		
+		if(error.message === `Cannot read properties of undefined (reading 'level_progress')`){
+			error.message = `Username or Password not correct`;
+		}
 		res.status(401).json(
 			error.message
 		);

@@ -67,7 +67,7 @@ export default class User {
 
     if(result.rows[0].username==''){
 
-      throw new LoginError("Username or Password not corret",401);
+      throw new LoginError("Username or Password not correct",401);
       
 
     }
