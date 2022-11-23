@@ -119,7 +119,7 @@ export default class User {
     }
     let number_of_trials = await pool.query(
       `select first_trials from card_game.client where username='` +
-        username +
+        username+
         `'`
     );
     let bonus = await pool.query(
@@ -223,7 +223,7 @@ export default class User {
         `'`
     );
 
-    if (score > 100) {
+    if (score > 120) {
       throw new ScoreError("Score for single game too high", 400);
     }
 
@@ -234,6 +234,10 @@ export default class User {
     level_progress.rows[0].level_progress += 1;
 
     global_score.rows[0].global_score += score;
+
+    if(global_score.rows[0].global_score>1055){
+      throw new ScoreError("Global Score too high",400);
+    }
 
     deck_level.rows[0].deck_level = this.deck.create_deck_for_level(
       level_progress.rows[0].level_progressna

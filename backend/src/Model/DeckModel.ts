@@ -14,6 +14,7 @@ export default class Deck {
 	}
   
 	constructor() {
+	  
 	  const suites = ["C", "D", "H", "S"];
   
 	  const values = [

@@ -18,7 +18,6 @@ describe('test for deck model',()=>{
   
   test("expect deck for player has been created", () => {
     deck = Deck.create_a_deck();
-    console.log(deck.deck)
     for(let j=0;j<=1000;j++){
 
       for (let i = 0; i <= 9; i++) {
