@@ -37,9 +37,10 @@ export const sign_in = async (req: Request, res: Response, next: NextFunction) =
 			data: user
 		});
 	} catch (error: Error | any) {
-		res.status(401).json({
-			error: error.message
-		});
+		
+		res.status(401).json(
+			error.message
+		);
 	}
 }
 

@@ -775,89 +775,6 @@ export default class Deck {
 		  break;
 		}
 		case 8: {
-		  //RANGE >=10 <=5
-		  this.players_user_card = [];
-		  this.players_bot_1_card = [];
-		  this.players_bot_2_card = [];
-		  this.players_bot_3_card = [];
-		  this.players_bot_4_card = [];
-		  for (let i = 0; i <= this.deck.length; i++) {
-			if (
-			  this.deck[i] == "H02" ||
-			  this.deck[i] == "S10" ||
-			  this.deck[i] == "D05" ||
-			  this.deck[i] == "C03" ||
-			  this.deck[i] == "D08" ||
-			  this.deck[i] == "H12" ||
-			  this.deck[i] == "D13" ||
-			  this.deck[i] == "D01" ||
-			  this.deck[i] == "C09" ||
-			  this.deck[i] == "H08"
-			) {
-			  this.players_user_card.push(this.deck[i]);
-			}
-			if (
-			  this.deck[i] == "S05" ||
-			  this.deck[i] == "D10" ||
-			  this.deck[i] == "C12" ||
-			  this.deck[i] == "H06" ||
-			  this.deck[i] == "D03" ||
-			  this.deck[i] == "S04" ||
-			  this.deck[i] == "H04" ||
-			  this.deck[i] == "C04" ||
-			  this.deck[i] == "C11" ||
-			  this.deck[i] == "D12"
-			) {
-			  this.players_bot_1_card.push(this.deck[i]);
-			}
-			if (
-			  this.deck[i] == "C13" ||
-			  this.deck[i] == "S11" ||
-			  this.deck[i] == "H05" ||
-			  this.deck[i] == "H11" ||
-			  this.deck[i] == "D07" ||
-			  this.deck[i] == "C08" ||
-			  this.deck[i] == "C02" ||
-			  this.deck[i] == "H09" ||
-			  this.deck[i] == "C10" ||
-			  this.deck[i] == "S06"
-			) {
-			  this.players_bot_2_card.push(this.deck[i]);
-			}
-			if (
-			  this.deck[i] == "H07" ||
-			  this.deck[i] == "S08" ||
-			  this.deck[i] == "C05" ||
-			  this.deck[i] == "C06" ||
-			  this.deck[i] == "S02" ||
-			  this.deck[i] == "D06" ||
-			  this.deck[i] == "C07" ||
-			  this.deck[i] == "H10" ||
-			  this.deck[i] == "S12" ||
-			  this.deck[i] == "S13"
-			) {
-			  this.players_bot_3_card.push(this.deck[i]);
-			}
-			if (
-			  this.deck[i] == "H01" ||
-			  this.deck[i] == "D02" ||
-			  this.deck[i] == "C01" ||
-			  this.deck[i] == "H03" ||
-			  this.deck[i] == "H13" ||
-			  this.deck[i] == "S07" ||
-			  this.deck[i] == "S09" ||
-			  this.deck[i] == "D09" ||
-			  this.deck[i] == "D11" ||
-			  this.deck[i] == "D04"
-			) {
-			  this.players_bot_4_card.push(this.deck[i]);
-			}
-		  }
-  
-		  this.create_deck_for_player();
-		  break;
-		}
-		case 9: {
 		  //CQFP
 		  this.players_user_card = [];
 		  this.players_bot_1_card = [];
@@ -940,6 +857,89 @@ export default class Deck {
 		  this.create_deck_for_player();
 		  break;
 		}
+		case 9: {
+			//RANGE >=10 <=5
+			this.players_user_card = [];
+			this.players_bot_1_card = [];
+			this.players_bot_2_card = [];
+			this.players_bot_3_card = [];
+			this.players_bot_4_card = [];
+			for (let i = 0; i <= this.deck.length; i++) {
+			  if (
+				this.deck[i] == "H02" ||
+				this.deck[i] == "S10" ||
+				this.deck[i] == "D05" ||
+				this.deck[i] == "C03" ||
+				this.deck[i] == "D08" ||
+				this.deck[i] == "H12" ||
+				this.deck[i] == "D13" ||
+				this.deck[i] == "D01" ||
+				this.deck[i] == "C09" ||
+				this.deck[i] == "H08"
+			  ) {
+				this.players_user_card.push(this.deck[i]);
+			  }
+			  if (
+				this.deck[i] == "S05" ||
+				this.deck[i] == "D10" ||
+				this.deck[i] == "C12" ||
+				this.deck[i] == "H06" ||
+				this.deck[i] == "D03" ||
+				this.deck[i] == "S04" ||
+				this.deck[i] == "H04" ||
+				this.deck[i] == "C04" ||
+				this.deck[i] == "C11" ||
+				this.deck[i] == "D12"
+			  ) {
+				this.players_bot_1_card.push(this.deck[i]);
+			  }
+			  if (
+				this.deck[i] == "C13" ||
+				this.deck[i] == "S11" ||
+				this.deck[i] == "H05" ||
+				this.deck[i] == "H11" ||
+				this.deck[i] == "D07" ||
+				this.deck[i] == "C08" ||
+				this.deck[i] == "C02" ||
+				this.deck[i] == "H09" ||
+				this.deck[i] == "C10" ||
+				this.deck[i] == "S06"
+			  ) {
+				this.players_bot_2_card.push(this.deck[i]);
+			  }
+			  if (
+				this.deck[i] == "H07" ||
+				this.deck[i] == "S08" ||
+				this.deck[i] == "C05" ||
+				this.deck[i] == "C06" ||
+				this.deck[i] == "S02" ||
+				this.deck[i] == "D06" ||
+				this.deck[i] == "C07" ||
+				this.deck[i] == "H10" ||
+				this.deck[i] == "S12" ||
+				this.deck[i] == "S13"
+			  ) {
+				this.players_bot_3_card.push(this.deck[i]);
+			  }
+			  if (
+				this.deck[i] == "H01" ||
+				this.deck[i] == "D02" ||
+				this.deck[i] == "C01" ||
+				this.deck[i] == "H03" ||
+				this.deck[i] == "H13" ||
+				this.deck[i] == "S07" ||
+				this.deck[i] == "S09" ||
+				this.deck[i] == "D09" ||
+				this.deck[i] == "D11" ||
+				this.deck[i] == "D04"
+			  ) {
+				this.players_bot_4_card.push(this.deck[i]);
+			  }
+			}
+	
+			this.create_deck_for_player();
+			break;
+		  }
   
 		default: {
 		  break;

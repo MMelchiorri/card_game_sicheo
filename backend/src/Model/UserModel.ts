@@ -65,6 +65,12 @@ export default class User {
         `'`
     );
 
+    if(result.rows[0].username==''){
+
+      throw new LoginError("Username or Password not corret",401);
+      
+
+    }
 
     const password_hashed = await pool.query(
       `select password from card_game.client where username='` + username + `'`
