@@ -104,9 +104,9 @@ export const update_score = async (req: Request, res: Response, next: NextFuncti
 			}
 		});
 	} catch (error: Error | any) {
-		res.status(400).json({
-			error: error.message
-		});
+		res.status(400).json(
+			error.message
+		);
 	}
 }
 

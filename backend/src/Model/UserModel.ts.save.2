@@ -65,12 +65,6 @@ export default class User {
         `'`
     );
 
-    if(result.rows[0].username==''){
-
-      throw new LoginError("Username or Password not correct",401);
-      
-
-    }
 
     const password_hashed = await pool.query(
       `select password from card_game.client where username='` + username + `'`
@@ -126,7 +120,7 @@ export default class User {
     }
     let number_of_trials = await pool.query(
       `select first_trials from card_game.client where username='` +
-        username+
+        username +
         `'`
     );
     let bonus = await pool.query(
@@ -230,7 +224,11 @@ export default class User {
         `'`
     );
 
+    console.log(score);
+    console.log(typeof(score))
+
     if (score > 120) {
+      console.log('************')
       throw new ScoreError("Score for single game too high", 400);
     }
 
@@ -241,13 +239,10 @@ export default class User {
     level_progress.rows[0].level_progress += 1;
 
     global_score.rows[0].global_score += score;
-
-    if(global_score.rows[0].global_score>1160){
-      throw new ScoreError("Global Score too high",400);
-    }
+    console.log('global_score',)
 
     deck_level.rows[0].deck_level = this.deck.create_deck_for_level(
-      level_progress.rows[0].level_progress
+      level_progress.rows[0].level_progressna
     );
 
     await pool.query(
@@ -266,7 +261,6 @@ export default class User {
         username +
         `'`
     );
-    console.log(result.rows[0]);
 
     return result.rows[0];
   };
@@ -292,9 +286,9 @@ export default class User {
       throw new LoginError("Username or Password not correct", 401);
     }
 
-    if (!/^[a-zA-Z]{4,10}$/.test(nickname)) {
+    if (!/^[a-zA-Z]{4,8}$/.test(nickname)) {
       throw new NicknameError(
-        "Nickname non valido, inserisci un nickname valido tra 4 e 10 caratteri",
+        "Nickname non valido, inserisci un nickname valido tra 4 e 8 caratteri",
         400
       );
     }
@@ -320,7 +314,7 @@ export default class User {
    */
   get_score = async () => {
     const result = await pool.query(
-      `select nickname, global_score,level_progress,avatar from card_game.client where nickname!='' and username not like 'test%' order by global_score desc`
+      `select nickname, global_score,level_progress,avatar from card_game.client order by global_score desc`
     );
     return result.rows;
   };

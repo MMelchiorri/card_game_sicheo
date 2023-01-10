@@ -6,16 +6,13 @@ import config from "./config";
 import path from "path";
 import cors from "cors";
 import http from "http";
-import csp from 'express-csp-header';
+
 
 const app = express();
 
 const PORT = config.PORT_SERVER || 5000;
 
 let front_end_folder = path.join(__dirname, "../static/sicheo-card-game");
-let sicheo_brain_clash = path.join(__dirname,"../static/landingPage")
-
-
 
 app.use(express.json());
 
@@ -36,8 +33,4 @@ http.createServer(app).listen(PORT, () => {
 
 app.use("/user", user_router);
 
-console.log(sicheo_brain_clash)
-
-app.use('/SicheoBrainClash',express.static(sicheo_brain_clash))
-
-app.use("/BrainClash", express.static(path.join(front_end_folder)));
+//app.use("/BrainClash", express.static(path.join(front_end_folder)));
