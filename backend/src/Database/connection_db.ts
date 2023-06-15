@@ -6,8 +6,8 @@ export const pool = new pg.Pool({
   user: config.USER || "crate",
   host: config.HOST || "localhost",
   database: config.DATABASE || "card_game",
-  password: config.PSW,
-  port: parseInt(config.PORT_DB as string, 10) || 5432,
+  password: config.PSW || "asRoma90",
+  port: parseInt(config.PORT_DB as string, 10) || 5433,
    idleTimeoutMillis: 30000,
 });
 

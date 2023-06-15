@@ -12,7 +12,7 @@ const app = express();
 
 const PORT = config.PORT_SERVER || 5000;
 
-let front_end_folder = path.join(__dirname, "../static/sicheo-card-game");
+let front_end_folder = path.join(__dirname, "../static");
 
 app.use(express.json());
 
@@ -33,4 +33,4 @@ http.createServer(app).listen(PORT, () => {
 
 app.use("/user", user_router);
 
-//app.use("/BrainClash", express.static(path.join(front_end_folder)));
+app.use("/BrainClash", express.static(path.join(front_end_folder)));
